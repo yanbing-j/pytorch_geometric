@@ -5,6 +5,8 @@ import torch
 import torch_geometric.transforms as T
 from torch_geometric.datasets import TUDataset
 from torch_geometric.utils import degree
+from train_eval import eval_acc, train
+from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 
 
 class NormalizedDegree(object):
@@ -21,7 +23,10 @@ class NormalizedDegree(object):
 
 def get_dataset(name, sparse=True, cleaned=False):
     path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', name)
-    dataset = TUDataset(path, name, cleaned=cleaned)
+    if name == "OGBN-PRODUCTS":
+        dataset = PygNodePropPredDataset(name = 'ogbn-products', root = 'dataset/')
+    else:
+        dataset = TUDataset(path, name, cleaned=cleaned)
     dataset.data.edge_attr = None
 
     if dataset.data.x is None:
